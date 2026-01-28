@@ -1,0 +1,131 @@
+import { COLORS } from '../constants/theme';
+
+export const mockData = {
+    stats: [
+        {
+            id: 1,
+            title: 'Total Students',
+            value: '1,245',
+            icon: 'people',
+            color: COLORS.primary,
+            trend: 'up',
+            trendValue: '+12%',
+        },
+        {
+            id: 2,
+            title: 'Total Teachers',
+            value: '48',
+            icon: 'school',
+            color: COLORS.secondary,
+            trend: 'up',
+            trendValue: '+4%',
+        },
+        {
+            id: 3,
+            title: 'Active Courses',
+            value: '36',
+            icon: 'book',
+            color: COLORS.accent,
+            trend: 'down',
+            trendValue: '-2%',
+        },
+        {
+            id: 4,
+            title: 'Revenue (Month)',
+            value: '$24,500',
+            icon: 'wallet',
+            color: COLORS.success,
+            trend: 'up',
+            trendValue: '+18%',
+        },
+    ],
+    revenueData: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [
+            {
+                data: [15000, 18500, 22000, 21000, 24500, 28000],
+            },
+        ],
+    },
+    recentActivities: [
+        {
+            id: 1,
+            name: 'Azizbek Rahimov',
+            action: 'Enrolled in',
+            target: 'Frontend Development',
+            time: '2 hours ago',
+            avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+        },
+        {
+            id: 2,
+            name: 'Malika Karimova',
+            action: 'Paid for',
+            target: 'English Beginner',
+            time: '4 hours ago',
+            avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+        },
+        {
+            id: 3,
+            name: 'Jamshid Tursunov',
+            action: 'Completed',
+            target: 'Python Basics',
+            time: '1 day ago',
+            avatar: 'https://randomuser.me/api/portraits/men/67.jpg',
+        },
+        {
+            id: 4,
+            name: 'New Course Added',
+            action: 'Graphic Design',
+            target: 'by Admin',
+            time: '2 days ago',
+            avatar: null,
+            icon: 'add-circle',
+        },
+    ],
+    upcomingClasses: [
+        {
+            id: 1,
+            title: 'General English',
+            teacher: 'Mr. Smith',
+            time: '14:00 - 15:30',
+            room: 'Room 204',
+        },
+        {
+            id: 2,
+            title: 'React Native',
+            teacher: 'Jahongir aka',
+            time: '16:00 - 18:00',
+            room: 'Lab 1',
+        },
+    ],
+    students: [
+        { id: 1, name: 'Azizbek Rahimov', course: 'Frontend Development', status: 'Active', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
+        { id: 2, name: 'Malika Karimova', course: 'General English', status: 'Active', avatar: 'https://randomuser.me/api/portraits/women/44.jpg' },
+        { id: 3, name: 'Jamshid Tursunov', course: 'Python Basics', status: 'Graduated', avatar: 'https://randomuser.me/api/portraits/men/67.jpg' },
+        { id: 4, name: 'Sevara Aliyeva', course: 'Digital Marketing', status: 'Pending', avatar: 'https://randomuser.me/api/portraits/women/12.jpg' },
+        { id: 5, name: 'Botir Zokirov', course: 'Frontend Development', status: 'Active', avatar: 'https://randomuser.me/api/portraits/men/22.jpg' },
+        { id: 6, name: 'Dilnoza Saidova', course: 'General English', status: 'Active', avatar: 'https://randomuser.me/api/portraits/women/28.jpg' },
+        { id: 7, name: 'Rustam Karimov', course: 'Graphic Design', status: 'Active', avatar: 'https://randomuser.me/api/portraits/men/14.jpg' },
+        { id: 8, name: 'Shakhnoza Alimova', course: 'English Intermediate', status: 'Active', avatar: 'https://randomuser.me/api/portraits/women/35.jpg' },
+    ],
+    teachers: [
+        { id: 1, name: 'John Smith', subject: 'English Language', students: 124, avatar: 'https://randomuser.me/api/portraits/men/11.jpg' },
+        { id: 2, name: 'Jahongir aka', subject: 'Software Development', students: 86, avatar: 'https://randomuser.me/api/portraits/men/5.jpg' },
+        { id: 3, name: 'Elena Kim', subject: 'Graphic Design', students: 45, avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
+        { id: 4, name: 'David Miller', subject: 'Marketing', students: 60, avatar: 'https://randomuser.me/api/portraits/men/45.jpg' },
+    ],
+    courses: [
+        { id: 1, title: 'Frontend Development', duration: '6 months', students: 86, price: '$200', color: COLORS.primary, icon: 'code' },
+        { id: 2, title: 'General English', duration: '3 months', students: 145, price: '$100', color: COLORS.secondary, icon: 'language' },
+        { id: 3, title: 'IELTS Preparation', duration: '4 months', students: 92, price: '$150', color: COLORS.accent, icon: 'school' },
+        { id: 4, title: 'Python Basics', duration: '4 months', students: 64, price: '$180', color: COLORS.info, icon: 'bug' },
+        { id: 5, title: 'Digital Marketing', duration: '3 months', students: 55, price: '$120', color: COLORS.warning, icon: 'megaphone' },
+    ],
+    finance: [
+        { id: 1, title: 'Tuition Fee - Azizbek', amount: '+$200.00', date: 'Today, 10:30', status: 'Paid', type: 'income' },
+        { id: 2, title: 'Office Rent', amount: '-$500.00', date: 'Yesterday, 14:20', status: 'Paid', type: 'expense' },
+        { id: 3, title: 'Tuition Fee - Malika', amount: '+$100.00', date: 'Yesterday, 09:15', status: 'Paid', type: 'income' },
+        { id: 4, title: 'Utilities', amount: '-$120.00', date: '2 days ago', status: 'Paid', type: 'expense' },
+        { id: 5, title: 'Teacher Salary - John', amount: '-$1200.00', date: '3 days ago', status: 'Processed', type: 'expense' },
+    ]
+};
