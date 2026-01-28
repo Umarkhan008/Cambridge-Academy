@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
-import { View, Platform, StatusBar } from 'react-native';
+import { View, Platform, useWindowDimensions } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,6 +14,8 @@ import { LanguageContext, LanguageProvider } from './src/context/LanguageContext
 import { SchoolProvider } from './src/context/SchoolContext';
 import { UIProvider } from './src/context/UIContext';
 import Loader from './src/components/Loader';
+import AdminLayout from './src/layouts/AdminLayout';
+import linking from './src/config/linking';
 
 // Import Screens (Admin)
 import DashboardScreen from './src/screens/DashboardScreen';
@@ -20,12 +23,17 @@ import StudentsScreen from './src/screens/StudentsScreen';
 import LeadsScreen from './src/screens/LeadsScreen';
 import TeachersScreen from './src/screens/TeachersScreen';
 import CoursesScreen from './src/screens/CoursesScreen';
+import RoomsScreen from './src/screens/RoomsScreen';
+import SubjectsScreen from './src/screens/SubjectsScreen';
 import ScheduleScreen from './src/screens/ScheduleScreen';
 import FinanceScreen from './src/screens/FinanceScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import StudentDetailScreen from './src/screens/StudentDetailScreen';
 import TeacherDetailScreen from './src/screens/TeacherDetailScreen';
 import CourseDetailScreen from './src/screens/CourseDetailScreen';
+import AttendanceScreen from './src/screens/AttendanceScreen';
+import MoreScreen from './src/screens/MoreScreen';
+import CustomTabBar from './src/components/navigation/CustomTabBar';
 
 // Import Screens (Student)
 import StudentHomeScreen from './src/screens/student/StudentHomeScreen';
@@ -40,51 +48,68 @@ import ForgotPasswordScreen from './src/screens/auth/ForgotPasswordScreen';
 // Navigators
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const FullWebScreen = (Component) => (props) => (
+    <AdminLayout>
+        <Component {...props} />
+    </AdminLayout>
+);
 
-// Admin Tab Navigator
+// Admin Web Navigator (Desktop Sidebar Layout)
+const AdminWebNavigator = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }}>
+            <Stack.Screen name="Dashboard" component={FullWebScreen(DashboardScreen)} />
+            <Stack.Screen name="Students" component={FullWebScreen(StudentsScreen)} />
+            <Stack.Screen name="Teachers" component={FullWebScreen(TeachersScreen)} />
+            <Stack.Screen name="Courses" component={FullWebScreen(CoursesScreen)} />
+            <Stack.Screen name="Rooms" component={FullWebScreen(RoomsScreen)} />
+            <Stack.Screen name="Subjects" component={FullWebScreen(SubjectsScreen)} />
+            <Stack.Screen name="Leads" component={FullWebScreen(LeadsScreen)} />
+            <Stack.Screen name="Schedule" component={FullWebScreen(ScheduleScreen)} />
+            <Stack.Screen name="Finance" component={FullWebScreen(FinanceScreen)} />
+            <Stack.Screen name="Settings" component={FullWebScreen(SettingsScreen)} />
+        </Stack.Navigator>
+    );
+};
+
+// Stack for More tab screens to prevent navigation errors
+const MoreStack = createStackNavigator();
+const AdminMoreStack = () => {
+    const { theme } = useContext(ThemeContext);
+    const { t } = useContext(LanguageContext);
+
+    return (
+        <MoreStack.Navigator screenOptions={{ headerShown: false }}>
+            <MoreStack.Screen name="MoreMain" component={MoreScreen} />
+            <MoreStack.Screen name="Teachers" component={TeachersScreen} />
+            <MoreStack.Screen name="Leads" component={LeadsScreen} />
+            <MoreStack.Screen name="Subjects" component={SubjectsScreen} />
+            <MoreStack.Screen name="Rooms" component={RoomsScreen} />
+            <MoreStack.Screen name="Finance" component={FinanceScreen} />
+            <MoreStack.Screen name="Settings" component={SettingsScreen} />
+        </MoreStack.Navigator>
+    );
+};
+
+// Admin Mobile Tab Navigator
 const AdminTabNavigator = () => {
     const { theme } = useContext(ThemeContext);
     const { t } = useContext(LanguageContext);
 
-    const tabBarStyle = {
-        backgroundColor: theme.surface,
-        borderTopColor: theme.border,
-        height: Platform.OS === 'ios' ? 88 : 60,
-        paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-        paddingTop: 8,
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    };
+    // tabBarStyle removed as it is handled by CustomTabBar
 
     return (
         <Tab.Navigator
-            screenOptions={({ route }) => ({
+            tabBar={props => <CustomTabBar {...props} />}
+            screenOptions={{
                 headerShown: false,
-                tabBarStyle: tabBarStyle,
-                tabBarActiveTintColor: COLORS.primary,
-                tabBarInactiveTintColor: theme.textSecondary,
-                tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-                    if (route.name === 'Dashboard') iconName = focused ? 'grid' : 'grid-outline';
-                    else if (route.name === 'Students') iconName = focused ? 'people' : 'people-outline';
-                    else if (route.name === 'Teachers') iconName = focused ? 'school' : 'school-outline';
-                    else if (route.name === 'Courses') iconName = focused ? 'book' : 'book-outline';
-                    else if (route.name === 'Leads') iconName = focused ? 'magnet' : 'magnet-outline';
-                    else if (route.name === 'More') iconName = focused ? 'ellipsis-horizontal' : 'ellipsis-horizontal-outline';
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-            })}
+            }}
         >
             <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ tabBarLabel: t.dashboard }} />
             <Tab.Screen name="Students" component={StudentsScreen} options={{ tabBarLabel: t.students }} />
-            <Tab.Screen name="Leads" component={LeadsScreen} options={{ tabBarLabel: t.leads }} />
-            <Tab.Screen name="Teachers" component={TeachersScreen} options={{ tabBarLabel: t.teachers }} />
-            <Tab.Screen name="Courses" component={CoursesScreen} options={{ tabBarLabel: t.courses }} />
-            <Tab.Screen name="More" component={SettingsScreen} options={{ tabBarLabel: t.more }} />
+            <Tab.Screen name="Courses" component={CoursesScreen} options={{ tabBarLabel: t.groups || 'Guruhlar' }} />
+            <Tab.Screen name="Schedule" component={ScheduleScreen} options={{ tabBarLabel: t.schedule }} />
+            <Tab.Screen name="More" component={AdminMoreStack} options={{ tabBarLabel: t.more }} />
         </Tab.Navigator>
     );
 };
@@ -94,40 +119,17 @@ const StudentTabNavigator = () => {
     const { theme } = useContext(ThemeContext);
     const { t } = useContext(LanguageContext);
 
-    const tabBarStyle = {
-        backgroundColor: theme.surface,
-        borderTopColor: theme.border,
-        height: Platform.OS === 'ios' ? 88 : 60,
-        paddingBottom: Platform.OS === 'ios' ? 28 : 8,
-        paddingTop: 8,
-        elevation: 8,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: -2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-    };
+    // tabBarStyle removed, using CustomTabBar
 
     return (
         <Tab.Navigator
-            screenOptions={({ route }) => ({
+            tabBar={props => <CustomTabBar {...props} />}
+            screenOptions={{
                 headerShown: false,
-                tabBarStyle: tabBarStyle,
-                tabBarActiveTintColor: COLORS.primary,
-                tabBarInactiveTintColor: theme.textSecondary,
-                tabBarLabelStyle: { fontSize: 12, fontWeight: '600' },
-                tabBarIcon: ({ focused, color, size }) => {
-                    let iconName;
-                    if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
-                    else if (route.name === 'Classes') iconName = focused ? 'library' : 'library-outline';
-                    else if (route.name === 'Schedule') iconName = focused ? 'calendar' : 'calendar-outline';
-                    else if (route.name === 'Payments') iconName = focused ? 'card' : 'card-outline';
-                    else if (route.name === 'Settings') iconName = focused ? 'settings' : 'settings-outline';
-                    return <Ionicons name={iconName} size={size} color={color} />;
-                },
-            })}
+            }}
         >
             <Tab.Screen name="Home" component={StudentHomeScreen} options={{ tabBarLabel: t.home }} />
-            <Tab.Screen name="Classes" component={MyCoursesScreen} options={{ tabBarLabel: t.classes }} />
+            <Tab.Screen name="MyCourses" component={MyCoursesScreen} options={{ tabBarLabel: t.classes }} />
             <Tab.Screen name="Schedule" component={MyScheduleScreen} options={{ tabBarLabel: t.schedule }} />
             <Tab.Screen name="Payments" component={MyPaymentsScreen} options={{ tabBarLabel: t.payments }} />
             <Tab.Screen name="Settings" component={SettingsScreen} options={{ tabBarLabel: t.settings }} />
@@ -135,9 +137,26 @@ const StudentTabNavigator = () => {
     );
 };
 
+// Student Web Navigator
+// Student Web Navigator
+const StudentWebNavigator = () => {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false, animationEnabled: false }}>
+            <Stack.Screen name="Home" component={FullWebScreen(StudentHomeScreen)} />
+            <Stack.Screen name="MyCourses" component={FullWebScreen(MyCoursesScreen)} />
+            <Stack.Screen name="Schedule" component={FullWebScreen(MyScheduleScreen)} />
+            <Stack.Screen name="Payments" component={FullWebScreen(MyPaymentsScreen)} />
+            <Stack.Screen name="Settings" component={FullWebScreen(SettingsScreen)} />
+        </Stack.Navigator>
+    );
+};
+
 const RootNavigator = () => {
     const { userToken, userInfo, isLoading } = useContext(AuthContext);
     const { theme, isDarkMode } = useContext(ThemeContext);
+    const { width } = useWindowDimensions();
+
+    const isDesktop = Platform.OS === 'web' && width >= 1280;
 
     if (isLoading) {
         return (
@@ -159,50 +178,83 @@ const RootNavigator = () => {
     };
 
     return (
-        <NavigationContainer theme={navigationTheme}>
+        <NavigationContainer theme={navigationTheme} linking={linking}>
             <StatusBar
                 barStyle={isDarkMode ? "light-content" : "dark-content"}
                 backgroundColor={theme.background}
             />
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {userToken === null ? (
-                    // Auth Stack
                     <>
                         <Stack.Screen name="Login" component={LoginScreen} />
                         <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
                     </>
                 ) : userInfo?.role === 'admin' ? (
-                    // Admin Stack
                     <>
-                        <Stack.Screen name="AdminMain" component={AdminTabNavigator} />
-                        <Stack.Screen name="Schedule" component={ScheduleScreen} />
-                        <Stack.Screen name="Finance" component={FinanceScreen} />
-                        <Stack.Screen name="Settings" component={SettingsScreen} />
-
-                        {/* Detail Screens */}
-                        <Stack.Screen name="StudentDetail" component={StudentDetailScreen} />
-                        <Stack.Screen name="TeacherDetail" component={TeacherDetailScreen} />
-                        <Stack.Screen name="CourseDetail" component={CourseDetailScreen} />
+                        <Stack.Screen
+                            name="AdminMain"
+                            component={isDesktop ? AdminWebNavigator : AdminTabNavigator}
+                        />
+                        <Stack.Screen
+                            name="StudentDetail"
+                            component={isDesktop ? FullWebScreen(StudentDetailScreen) : StudentDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="TeacherDetail"
+                            component={isDesktop ? FullWebScreen(TeacherDetailScreen) : TeacherDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="CourseDetail"
+                            component={isDesktop ? FullWebScreen(CourseDetailScreen) : CourseDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="Attendance"
+                            component={isDesktop ? FullWebScreen(AttendanceScreen) : AttendanceScreen}
+                        />
                     </>
                 ) : userInfo?.role === 'teacher' ? (
-                    // Teacher Stack
                     <>
-                        <Stack.Screen name="TeacherMain" component={AdminTabNavigator} />
-                        <Stack.Screen name="Schedule" component={ScheduleScreen} />
-                        <Stack.Screen name="Finance" component={FinanceScreen} />
-                        <Stack.Screen name="TeacherSettings" component={SettingsScreen} />
-
-                        {/* Detail Screens */}
-                        <Stack.Screen name="StudentDetail" component={StudentDetailScreen} />
-                        <Stack.Screen name="TeacherDetail" component={TeacherDetailScreen} />
-                        <Stack.Screen name="CourseDetail" component={CourseDetailScreen} />
+                        <Stack.Screen
+                            name="TeacherMain"
+                            component={isDesktop ? AdminWebNavigator : AdminTabNavigator}
+                        />
+                        {!isDesktop && (
+                            <>
+                                <Stack.Screen name="Schedule" component={ScheduleScreen} />
+                                <Stack.Screen name="Finance" component={FinanceScreen} />
+                                <Stack.Screen name="TeacherSettings" component={SettingsScreen} />
+                            </>
+                        )}
+                        <Stack.Screen
+                            name="StudentDetail"
+                            component={isDesktop ? FullWebScreen(StudentDetailScreen) : StudentDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="TeacherDetail"
+                            component={isDesktop ? FullWebScreen(TeacherDetailScreen) : TeacherDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="CourseDetail"
+                            component={isDesktop ? FullWebScreen(CourseDetailScreen) : CourseDetailScreen}
+                        />
+                        <Stack.Screen
+                            name="Attendance"
+                            component={isDesktop ? FullWebScreen(AttendanceScreen) : AttendanceScreen}
+                        />
                     </>
                 ) : (
-                    // Student Stack
                     <>
-                        <Stack.Screen name="StudentMain" component={StudentTabNavigator} />
-                        <Stack.Screen name="StudentSettings" component={SettingsScreen} />
-                        <Stack.Screen name="CourseDetail" component={CourseDetailScreen} />
+                        <Stack.Screen
+                            name="StudentMain"
+                            component={isDesktop ? StudentWebNavigator : StudentTabNavigator}
+                        />
+                        {!isDesktop && (
+                            <Stack.Screen name="StudentSettings" component={SettingsScreen} />
+                        )}
+                        <Stack.Screen
+                            name="CourseDetail"
+                            component={isDesktop ? FullWebScreen(CourseDetailScreen) : CourseDetailScreen}
+                        />
                     </>
                 )}
             </Stack.Navigator>
@@ -211,7 +263,16 @@ const RootNavigator = () => {
     );
 };
 
+
 export default function App() {
+    // Fix body overflow for web scrolling
+    React.useEffect(() => {
+        if (Platform.OS === 'web') {
+            // Allow scrolling on web by overriding expo-reset
+            document.body.style.overflow = 'visible';
+        }
+    }, []);
+
     return (
         <SafeAreaProvider>
             <UIProvider>

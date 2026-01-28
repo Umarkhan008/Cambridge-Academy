@@ -2,6 +2,7 @@
   "expo": {
     "name": "Pro Teach Dashboard",
     "slug": "pro-teach-dashboard",
+    "scheme": "proteach",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,8 +31,15 @@
     },
     "plugins": [
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      "@react-native-community/datetimepicker"
     ],
+    "updates": {
+      "url": "https://u.expo.dev/197c2a0b-2f40-461c-92c8-f899593bd30c"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "extra": {
       "eas": {
         "projectId": "197c2a0b-2f40-461c-92c8-f899593bd30c"
